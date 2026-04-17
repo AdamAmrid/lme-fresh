@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import * as XLSX from 'xlsx';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { FiHome, FiPieChart, FiSettings, FiLogOut, FiX, FiActivity, FiUser, FiCheckCircle, FiClock } from 'react-icons/fi';
 import { useWebSocket } from '../hooks/useWebSocket';
 
@@ -22,10 +21,7 @@ export default function InstructorDashboard() {
   const { lastMessage } = useWebSocket('instructor');
 
   const [students, setStudents] = useState({});
-  const [alerts, setAlerts] = useState([]);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
-  const [broadcastLoading, setBroadcastLoading] = useState(false);
-  const [broadcastSent, setBroadcastSent]       = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [sessionStartTime] = useState(Date.now());
 
@@ -53,18 +49,10 @@ export default function InstructorDashboard() {
       setStudents(prev => {
         const prevStudent = prev[data.student_id];
         
-        // Alert Engine: Struggling or Unengaged detections
+             // Alert Engine: Struggling or Unengaged detections
         if (data.state === 'Struggling' || data.state === 'Unengaged') {
            if (!prevStudent || prevStudent.state !== data.state || (data.idle_time > 30 && prevStudent.idle_time <= 30)) {
-             const newAlert = {
-               id: Date.now() + Math.random(),
-               student_id: data.student_id,
-               student_name: data.student_name,
-               state: data.state,
-               idle_time: data.idle_time,
-               timestamp: new Date().toLocaleTimeString()
-             };
-             setAlerts(a => [newAlert, ...a].slice(0, 20));
+             // Alert logic removed as it was unused
            }
         }
 
@@ -445,7 +433,6 @@ export default function InstructorDashboard() {
         const avgMastery = studentList.length
           ? Math.round(studentList.reduce((acc, s) => acc + (s.current_score || 0) * 100, 0) / studentList.length)
           : 0;
-        const finishedCount  = studentList.filter(s => s.state === 'Finished').length;
         const struggledCount = studentList.filter(s => s.state === 'Struggling' || (s.totalMistakes || 0) >= 3).length;
 
         return (

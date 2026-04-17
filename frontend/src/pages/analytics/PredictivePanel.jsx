@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAnalytics } from '../../hooks/useAnalytics';
-import { LineChart, Line, AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
+import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
 import { FiAlertCircle, FiCheckCircle, FiUsers, FiActivity, FiArrowRight } from 'react-icons/fi';
 
 const COLORS = {

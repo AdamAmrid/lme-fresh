@@ -25,7 +25,7 @@ export default function Login() {
       setHighlightIdx(prev => (prev + 1) % highlights.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [highlights.length]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

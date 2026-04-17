@@ -62,9 +62,6 @@ export default function CohortView({ onSelectStudent }) {
     s.student_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
   
-  // Filtered results
-  const chartData = filteredStudents;
-
   // 1. Mission Refactor: Dynamic Constraint Handling for High-Density Heatmaps
   let maxSessions = 5;
   filteredStudents.forEach(s => {
