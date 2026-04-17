@@ -1,0 +1,10 @@
+cd "c:\Users\Adam\OneDrive - Université Mohammed VI Polytechnique\Bureau\Internship\Learner_Profiling_Analytics\learner-modeling-engine\backend"
+.\venv\Scripts\activate
+uvicorn main:app --reload --port 8000
+
+
+cd "c:\Users\Adam\OneDrive - Université Mohammed VI Polytechnique\Bureau\Internship\Learner_Profiling_Analytics\learner-modeling-engine\frontend"
+npm start
+
+
+So now, the professor told me that we need to mention the foundations and theory behind this system, Why are we developing it, it's features, Theoritical framework (Self-regulation learning theory, engagement(cognitive, behavioral, affective), feedback as well which also has different types, behavioral analytics...). Why would we need a user and instructor profile and so one.
