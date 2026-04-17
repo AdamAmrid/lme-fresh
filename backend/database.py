@@ -5,7 +5,18 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")
+DATABASE_URL = (
+    os.getenv("DATABASE_URL") or 
+    os.getenv("POSTGRES_URL") or 
+    os.getenv("POSTGRES_URL_NON_POOLING") or 
+    os.getenv("STORAGE_URL") or
+    os.getenv("PRISMA_DATABASE_URL")
+)
+
+if DATABASE_URL:
+    print(f"DATABASE_URL found: {DATABASE_URL[:10]}...{DATABASE_URL[-5:]}")
+else:
+    print("DATABASE_URL NOT FOUND! Falling back to SQLite.")
 
 # Automatic Fallback for Local/Cloud distinction
 if not DATABASE_URL:
