@@ -1,3 +1,9 @@
+import os
+import sys
+
+# Ensure siblings are findable in Vercel environment
+sys.path.append(os.path.dirname(__file__))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
