@@ -12,6 +12,5 @@ pandas
 numpy
 scikit-learn
 scipy
-shap
 joblib
 gunicorn

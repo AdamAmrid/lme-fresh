@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     // Clean login: no more mock 'name' or 'role' needed!
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
-    const response = await axios.post(`${API_BASE}/auth/login`, { email, password });
+    const response = await axios.post(`${API_BASE}/api/auth/login`, { email, password });
     const { access_token } = response.data;
     const decoded = parseJwt(access_token);
     
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (email, password, role, name) => {
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
-    await axios.post(`${API_BASE}/auth/register`, { email, password, role, name });
+    await axios.post(`${API_BASE}/api/auth/register`, { email, password, role, name });
     await login(email, password);
   };
 
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
     if (user?.token) {
       console.log("Interceptor Ping: Asserting JWT against SQLite backend...");
       const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
-      axios.get(`${API_BASE}/auth/me`, {
+      axios.get(`${API_BASE}/api/auth/me`, {
         headers: { Authorization: `Bearer ${user.token}` }
       }).catch(err => {
         console.error("Auth sync failure (DB record missing or invalid). Purging phantom block.", err);

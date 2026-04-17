@@ -26,15 +26,15 @@ export function useAnalytics() {
   }, []);
 
   const fetchCohort = useCallback(() => {
-    return executeFetch('/analytics/cohort');
+    return executeFetch('/api/analytics/cohort');
   }, [executeFetch]);
 
   const fetchStudent = useCallback((id) => {
-    return executeFetch(`/analytics/student/${encodeURIComponent(id)}`);
+    return executeFetch(`/api/analytics/student/${encodeURIComponent(id)}`);
   }, [executeFetch]);
 
   const fetchRisk = useCallback(() => {
-    return executeFetch('/analytics/risk');
+    return executeFetch('/api/analytics/risk');
   }, [executeFetch]);
 
   return useMemo(() => ({ 

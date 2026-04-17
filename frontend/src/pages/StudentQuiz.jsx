@@ -27,7 +27,8 @@ export default function StudentQuiz() {
     if (!user?.email) return;
     const fetchProgress = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/student/progress?email=${user.email}`);
+        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
+        const response = await fetch(`${API_BASE}/api/student/progress?email=${user.email}`);
         if (response.ok) {
           const data = await response.json();
           setProgressData(data);
@@ -295,7 +296,8 @@ export default function StudentQuiz() {
     // Do NOT clear hint here — keep old hint visible while next one loads
     setHintError(null);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/hint`, {
+      const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
+      const res = await fetch(`${API_BASE}/api/hint`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -580,8 +582,9 @@ export default function StudentQuiz() {
 
     if (hasHistory) {
       setIsGenerating(true);
+      const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
       try {
-        const res = await fetch('http://localhost:8000/api/questions/generate', {
+        const res = await fetch(`${API_BASE}/api/questions/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ student_email: user.email, module: mod })

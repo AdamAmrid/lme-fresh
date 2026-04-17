@@ -32,10 +32,10 @@ app.add_middleware(
 from routers.analytics import analytics_router
 from routers import student
 
-app.include_router(auth.router)
-app.include_router(ws.router)
-app.include_router(hints.router)
-app.include_router(analytics_router, prefix="/analytics", tags=["analytics"])
+app.include_router(auth.router, prefix="/api")
+app.include_router(ws.router, prefix="/api")
+app.include_router(hints.router, prefix="/api")
+app.include_router(analytics_router, prefix="/api/analytics", tags=["analytics"])
 app.include_router(student.router, prefix="/api/student", tags=["student"])
 app.include_router(questions.router, prefix="/api/questions", tags=["questions"])
 
