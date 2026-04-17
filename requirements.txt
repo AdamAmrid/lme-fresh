@@ -1,3 +1,4 @@
+# Cleaned requirements for Vercel deployment
 fastapi
 uvicorn
 sqlalchemy
