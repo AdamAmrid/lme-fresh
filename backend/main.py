@@ -1,5 +1,9 @@
 import os
 import sys
+
+# Ensure the root directory is in the path so 'backend.xxx' imports work
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -15,7 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Absolute imports using the 'backend' package prefix
 from backend.database import Base, engine
 from backend.routers import auth, ws, hints, questions
 from backend.routers.analytics import analytics_router
