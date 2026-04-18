@@ -419,7 +419,10 @@ def get_student_profile(student_id: str, _: User = Depends(check_instructor)):
         
     # Recalculate global features for centralized risk inference
     avg_hint_dependency = sum(hint_dependency_per_session) / max(1, len(hint_dependency_per_session))
-    avg_si_val = float(df['struggle_index'].mean())
+    
+    # HARDENING: Handle NaN struggle index
+    mean_si_global = df['struggle_index'].mean()
+    avg_si_val = float(mean_si_global) if pd.notna(mean_si_global) else 0.0
     
     frustration_rows = len(df[(df['attempt_count'] >= 3) & (df['is_correct'] == False) & (df['idle_time'] < 10)])
     frust = round(min(1.0, frustration_rows / max(len(df), 1)), 4)
@@ -427,20 +430,29 @@ def get_student_profile(student_id: str, _: User = Depends(check_instructor)):
     # Centralized ML-Driven Risk Inference
     risk_metrics = {
         "avg_SI": avg_si_val,
-        "hint_dependency_score": avg_hint_dependency,
+        "hint_dependency_score": float(avg_hint_dependency),
         "unengaged_ratio": float(un_ratio),
-        "avg_attempt_count": float(avg_attempt),
-        "avg_idle_time": float(avg_idle),
+        "avg_attempt_count": float(avg_attempt) if pd.notna(avg_attempt) else 0.0,
+        "avg_idle_time": float(avg_idle) if pd.notna(avg_idle) else 0.0,
         "frustration_index": float(frust),
         "session_count": int(session_count),
         "participation": float(participation_rate),
         "avg_mastery": float(mastery_trajectory[-1]) if mastery_trajectory else 1.0
     }
-    inf = risk_model.infer_risk_score(risk_metrics)
-    risk_score = inf["risk_score"]
-    is_ml_driven = inf["is_ml_driven"]
-    dominant_weakness = inf["dominant_weakness"]
-    suggested_intervention = inf["suggested_intervention"]
+    
+    # Safe call to risk model
+    try:
+        inf = risk_model.infer_risk_score(risk_metrics)
+        risk_score = inf.get("risk_score", 0.0)
+        is_ml_driven = inf.get("is_ml_driven", False)
+        dominant_weakness = inf.get("dominant_weakness", "stable")
+        suggested_intervention = inf.get("suggested_intervention", "Continue path")
+    except Exception as e_inf:
+        print(f"Inference error for {student_id}: {e_inf}")
+        risk_score = 0.0
+        is_ml_driven = False
+        dominant_weakness = "stable"
+        suggested_intervention = "Data insufficient for AI inference"
     
     # Consistency Logic for Presentation UI
     risk_label = "low" if risk_score < 0.30 else ("medium" if risk_score < 0.50 else "high")
