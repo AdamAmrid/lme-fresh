@@ -11,8 +11,13 @@ from backend.models.learner_state import TelemetryLog
 
 load_dotenv()
 router = APIRouter(tags=["AI Question Generator"])
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 logger = logging.getLogger("LME-Questions")
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    logger.warning("OPENAI_API_KEY not found in environment. Adaptive questions will be disabled.")
+    client = None
+else:
+    client = OpenAI(api_key=api_key)
 
 class QuestionGenerationRequest(BaseModel):
     student_email: str

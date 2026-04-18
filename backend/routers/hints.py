@@ -6,8 +6,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 router = APIRouter(tags=["hints"])
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 logger = logging.getLogger("LME-Hints")
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    logger.warning("OPENAI_API_KEY not found in environment. AI hints will be disabled.")
+    client = None
+else:
+    client = OpenAI(api_key=api_key)
 
 
 class HintMessage(BaseModel):

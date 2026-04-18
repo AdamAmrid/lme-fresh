@@ -23,7 +23,7 @@ from jose import jwt, JWTError
 analytics_router = APIRouter()
 
 # Target DB dynamically relative to the backend folder to support the seeded database
-ENGINE = create_engine("sqlite:///./lme.db?mode=ro", connect_args={"uri": True})
+from backend.database import engine as ENGINE
 
 SECRET_KEY = os.getenv("JWT_SECRET", "supersecretkey")
 ALGORITHM = "HS256"
@@ -489,6 +489,8 @@ def get_cohort_analytics(_: User = Depends(check_instructor)):
     train_risk_model()  # Always refresh cache before predicting
     try:
         df = pd.read_sql("SELECT * FROM telemetry_logs", ENGINE)
+        users_df = pd.read_sql("SELECT email, name FROM users", ENGINE)
+        user_map = dict(zip(users_df['email'], users_df['name']))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
         
@@ -538,7 +540,7 @@ def get_cohort_analytics(_: User = Depends(check_instructor)):
         # Build standard response objects from the Unified Report
         stu_obj = {
             "student_id": str(sid),
-            "student_name": report["student_name"] if "student_name" in report else str(sid),
+            "student_name": user_map.get(str(sid), report.get("student_name", str(sid))),
             "risk_score": report["risk_score"],
             "risk_label": report["risk_label"],
             "dominant_state": report["dominant_state"],

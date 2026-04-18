@@ -11,8 +11,8 @@ export const useWebSocket = (studentId, initialPayload = null) => {
     const defaultUrl = isLocal ? 'localhost:8000' : window.location.host;
     const url = process.env.REACT_APP_WS_URL || `${wsProto}://${defaultUrl}`;
     
-    console.log(`Connecting to ${url}/ws/${studentId}`);
-    ws.current = new WebSocket(`${url}/ws/${studentId}`);
+    console.log(`Connecting to ${url}/api/ws/${studentId}`);
+    ws.current = new WebSocket(`${url}/api/ws/${studentId}`);
 
     ws.current.onmessage = (event) => {
       console.log('WS Message received:', event.data);

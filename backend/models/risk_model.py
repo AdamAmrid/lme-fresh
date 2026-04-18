@@ -98,13 +98,23 @@ def get_unified_student_report(df: pd.DataFrame) -> dict:
         "dominant_state": str(dom_state_val)
     }
 
-def train_risk_model() -> None:
-    global model, is_fallback, training_data_cache
-    engine = create_engine("sqlite:///./lme.db?mode=ro", connect_args={"uri": True})
+import time
+last_training_time = 0
+
+def train_risk_model(force=False) -> None:
+    global model, is_fallback, training_data_cache, last_training_time
+    
+    # 5-minute training cache to prevent UI lag
+    if not force and (time.time() - last_training_time < 300) and model is not None:
+        return
+
+    from backend.database import engine
     
     try:
         df = pd.read_sql("SELECT * FROM telemetry_logs", engine)
-        if df.empty: training_data_cache = pd.DataFrame(); return
+        if df.empty:
+            training_data_cache = pd.DataFrame()
+            return
 
         features_list = []
         for sid, student_df in df.groupby('student_id'):
@@ -202,6 +212,7 @@ def train_risk_model() -> None:
         # ATOMIC SWAP: Only update globally once everything is successful
         model = new_model
         is_fallback = False
+        last_training_time = time.time()
         print("\n====================================\n")
     else:
         is_fallback = True
@@ -415,7 +426,7 @@ def predict(student_id: str) -> dict:
     
 def predict(student_id: str) -> dict:
     """Consolidated high-precision prediction."""
-    engine = create_engine("sqlite:///./lme.db?mode=ro", connect_args={"uri": True})
+    from backend.database import engine
     res = {
         "risk_score": 0.0, "risk_label": "low", "is_ml_driven": False,
         "dominant_weakness": "balanced", "suggested_intervention": "Continue current path",
@@ -440,7 +451,7 @@ def predict(student_id: str) -> dict:
 
 def get_student_risk(student_id: str) -> dict:
     """Minimal inference for detail header parity"""
-    engine = create_engine("sqlite:///./lme.db?mode=ro", connect_args={"uri": True})
+    from backend.database import engine
     try:
         df = pd.read_sql(f"SELECT * FROM telemetry_logs WHERE student_id = '{student_id}'", engine)
         report = get_unified_student_report(df)
