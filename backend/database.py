@@ -21,8 +21,14 @@ else:
 # Automatic Fallback for Local/Cloud distinction
 if not DATABASE_URL:
     # Local Development - Force it to the backend folder to match existing data
-    DATABASE_URL = "sqlite:///./backend/lme.db"
-    print(f"Using Local SQLite: {DATABASE_URL}")
+    if os.environ.get("VERCEL"):
+        # If on Vercel but no DATABASE_URL, use memory to avoid read-only FS crash
+        DATABASE_URL = "sqlite:///:memory:"
+        print("VERCEL DETECTED: Using In-Memory Database for Demo.")
+    else:
+        DATABASE_URL = "sqlite:///./backend/lme.db"
+        print(f"Using Local SQLite: {DATABASE_URL}")
+        
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 else:
     # Cloud Production (Postgres on Vercel/Supabase/Heroku)

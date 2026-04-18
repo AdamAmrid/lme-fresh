@@ -1,8 +1,14 @@
-import os
-import sys
-
-# Ensure the root directory is in the path so 'backend.xxx' imports work
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+# --- VERCEL PATH FIX ---
+# This ensures that 'backend.xxx' imports work whether running locally or on Vercel
+import os, sys
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.append(ROOT_DIR)
+# Also add the current dir just in case
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+if CURRENT_DIR not in sys.path:
+    sys.path.append(CURRENT_DIR)
+# -----------------------
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
