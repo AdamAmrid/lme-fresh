@@ -399,13 +399,13 @@ def get_student_profile(student_id: str, _: User = Depends(check_instructor)):
         heatmap.append({
             "session_index": int(s_idx),
             "dominant_state": str(dom_state_val),
-            "avg_SI": clean_si,
-            "avg_mastery": float(sess_mastery),
-            "session_score": float(sdf['current_score'].max()),
+            "avg_SI": float(clean_si) if clean_si is not None else 0.0,
+            "avg_mastery": float(sess_mastery) if sess_mastery is not None else 0.0,
+            "session_score": float(sdf['current_score'].max()) if not sdf.empty else 0.0,
             "hints_used": float(hint_dep),
-            "avg_idle_time": float(sdf['idle_time'].mean()),
+            "avg_idle_time": float(sdf['idle_time'].mean()) if not sdf.empty else 0.0,
             "frustration_index": float(s_frust),
-            "dominant_weakness": sess_inf["dominant_weakness"]
+            "dominant_weakness": str(sess_inf["dominant_weakness"])
         })
         
         # Compute exact hints requested per question dynamically from DB logs

@@ -25,6 +25,32 @@ export default function InstructorDashboard() {
   const [showSummary, setShowSummary] = useState(false);
   const [sessionStartTime] = useState(Date.now());
 
+  // 2. PASSIVE REFRESHER (For Vercel/Cloud)
+  // Re-fetch all data every 10 seconds since WebSockets are blocked
+  useEffect(() => {
+    const refreshData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/analytics/cohort`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data && data.students) {
+          const studentMap = {};
+          data.students.forEach(s => {
+            studentMap[s.student_id] = { ...s, lastSeen: 'Cloud Update' };
+          });
+          setStudents(studentMap);
+        }
+      } catch (err) {
+        console.error("Refresh Error:", err);
+      }
+    };
+
+    const interval = setInterval(refreshData, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   // 2. Telemetry Processor (Triggered by every student heartbeat)
   useEffect(() => {
     if (lastMessage) {
