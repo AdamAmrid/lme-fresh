@@ -25,6 +25,38 @@ export default function InstructorDashboard() {
   const [showSummary, setShowSummary] = useState(false);
   const [sessionStartTime] = useState(Date.now());
 
+  // 3. POLLING FALLBACK (For Vercel/Serverless)
+  useEffect(() => {
+    const pollInterval = setInterval(async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/analytics/live-feed`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        
+        if (Array.isArray(data) && data.length > 0) {
+          setStudents(prev => {
+            const next = { ...prev };
+            data.forEach(stu => {
+              // Only update if it's more recent or new
+              next[stu.student_id] = {
+                ...next[stu.student_id],
+                ...stu,
+                lastSeen: new Date().toLocaleTimeString()
+              };
+            });
+            return next;
+          });
+        }
+      } catch (err) {
+        console.error("Polling Error:", err);
+      }
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(pollInterval);
+  }, []);
+
   // 2. Telemetry Processor (Triggered by every student heartbeat)
   useEffect(() => {
     if (lastMessage) {
