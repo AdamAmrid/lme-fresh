@@ -22,23 +22,6 @@ from jose import jwt, JWTError
 
 analytics_router = APIRouter()
 
-@analytics_router.get("/live-feed")
-def get_live_feed(_: User = Depends(get_current_user)):
-    """A polling-based fallback for WebSockets on Vercel."""
-    try:
-        # Get data from the last 5 minutes
-        # Note: Using strftime because SQLite doesn't have a dedicated datetime type in some versions
-        df = pd.read_sql("SELECT * FROM telemetry_logs WHERE timestamp > datetime('now', '-5 minutes')", ENGINE)
-        if df.empty:
-            return []
-        
-        # Get the latest update for each student
-        latest = df.sort_values('timestamp').groupby('student_id').tail(1)
-        return latest.to_dict('records')
-    except Exception as e:
-        print(f"Live Feed Error: {e}")
-        return []
-
 # Target DB dynamically relative to the backend folder to support the seeded database
 from backend.database import engine as ENGINE
 
