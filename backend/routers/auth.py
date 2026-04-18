@@ -5,8 +5,8 @@ from jose import jwt
 from datetime import datetime, timedelta
 import os
 
-from database import get_db
-from models.learner_state import User, UserCreate, UserLogin, Token, UserResponse
+from backend.database import get_db
+from backend.models.learner_state import User, UserCreate, UserLogin, Token, UserResponse
 from fastapi.security import OAuth2PasswordBearer
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")

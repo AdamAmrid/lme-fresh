@@ -7,9 +7,9 @@ from typing import List, Dict
 from jose import jwt, JWTError
 from dotenv import load_dotenv
 
-from database import SessionLocal
-from models.learner_state import TelemetryLog, User
-import models.risk_model as risk_model
+from backend.database import SessionLocal
+from backend.models.learner_state import TelemetryLog, User
+import backend.models.risk_model as risk_model
 from pydantic import BaseModel
 
 # Load workspace environment variables

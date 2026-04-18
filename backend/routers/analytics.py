@@ -7,15 +7,15 @@ from fastapi import APIRouter, Depends, HTTPException
 import traceback
 from sqlalchemy import create_engine
 from pydantic import BaseModel
-from models.risk_model import get_unified_student_report
-from models.learner_state import TelemetryLog
-import models.risk_model as risk_model
-from models.risk_model import train_risk_model
+from backend.models.risk_model import get_unified_student_report
+from backend.models.learner_state import TelemetryLog
+import backend.models.risk_model as risk_model
+from backend.models.risk_model import train_risk_model
 from typing import List, Optional, Dict, Any
 
-from models.learner_state import User
-import models.risk_model as risk_model
-from models.risk_model import train_risk_model
+from backend.models.learner_state import User
+import backend.models.risk_model as risk_model
+from backend.models.risk_model import train_risk_model
 
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError

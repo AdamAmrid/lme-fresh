@@ -4,8 +4,8 @@ from sqlalchemy import func
 from typing import Dict, Any
 from datetime import datetime
 
-from database import get_db
-from models.learner_state import TelemetryLog
+from backend.database import get_db
+from backend.models.learner_state import TelemetryLog
 
 router = APIRouter()
 

@@ -6,8 +6,8 @@ import os, json, logging
 from openai import OpenAI
 from dotenv import load_dotenv
 
-from database import get_db
-from models.learner_state import TelemetryLog
+from backend.database import get_db
+from backend.models.learner_state import TelemetryLog
 
 load_dotenv()
 router = APIRouter(tags=["AI Question Generator"])
