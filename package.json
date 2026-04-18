@@ -1,5 +1,12 @@
 {
-  "dependencies": {
-    "docx": "^9.6.1"
+  "name": "lme-fresh",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "install": "cd frontend && npm install"
   }
 }
